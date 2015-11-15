@@ -1,5 +1,5 @@
 /**
  * Created by nadman on 12.11.15.
  */
-public class messageGet{
+public class MessageSend{
 }
