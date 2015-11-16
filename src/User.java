@@ -4,7 +4,6 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
 
 /**
@@ -40,20 +39,25 @@ public class User{
 	public static String getUserId(String token, String nameEnemy, String fullName){
 		JSONParser pars = new JSONParser();
 		String jsonFromVk = getJSONAboutUser(token, nameEnemy);
-		System.out.println(jsonFromVk);
 		String id = "something wrong with ID";
 		try {
 			Object objectFinal = pars.parse(jsonFromVk);
 			JSONObject objJsonFromVk = (JSONObject) objectFinal;
 			JSONArray objectInJson = (JSONArray) objJsonFromVk.get("response");
-//			JSONObject arrayInNumber = (JSONObject) objectInJson.get(1);
-//			Object cache1 = arrayInNumber.get("uid");
-//			long cache2 = (long) cache1;                //maybe without long variable. From Obj to String
-//			id = Long.toString(cache2);
+			JSONObject arrayInNumber = (JSONObject) objectInJson.get(1);
+			Object cache1 = arrayInNumber.get("uid");
+			long cache2 = (long) cache1;                //maybe without long variable. From Obj to String
+			id = Long.toString(cache2);
 //			fullName = arrayInNumber.get("first_name") + (String) arrayInNumber.get("last_name");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return id;
+	}
+
+	public static boolean containLetters(String str){
+		if(str.replaceAll("[a-zA-Z]+", "CHANGED").contains("CHANGED"))
+			return true;
+		return false;
 	}
 }

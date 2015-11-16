@@ -11,40 +11,62 @@ import java.util.Scanner;
  * Created by nadman on 11.11.15.
  */
 public class offlineChatVkontakte{
-	public static void main(String[] args) throws URISyntaxException, IOException, ParseException, InterruptedException{
-//		String ACCESS_TOKEN = getACCESS_TOKEN();
-		String ACCESS_TOKEN = "";
-		String vkIdUser = "";
+	public static void main(String[] args) throws URISyntaxException, IOException,
+			ParseException, InterruptedException{
+		String ACCESS_TOKEN = "3efddf60da1d6e40dcc67b0b891ec9903cb70fb881be8a61f7d37448c9da031cfb6390a03a2c9f53f01b9";
+		String vkIdUser = "b.nadman";
 		String vkNameUser = "Bohdan";
-		String vkNameEnemy = "";
-		String vkIdEnemy = "b.nadman";
+		String vkNameEnemy = "Roma";
+		String vkIdEnemy = "never_complain";
 
-		if(containLetters(vkIdUser))
+		if(User.containLetters(vkIdUser))
 			vkIdUser = User.getUserId(ACCESS_TOKEN, vkIdUser, "name");
-		if(containLetters(vkIdEnemy))
+		if(User.containLetters(vkIdEnemy))
 			vkIdEnemy = User.getUserId(ACCESS_TOKEN, vkIdEnemy, "name");
 
+		MessageGet messageGet = new MessageGet();
+
+//		messageGet.setIdEnemy(vkIdEnemy);
+		messageGet.setIdUser(vkIdUser);
+		messageGet.setToken(ACCESS_TOKEN);
+
+		MessageSend messageSend = new MessageSend();
+
+		messageSend.setIdUser(vkIdUser);
+		messageSend.setToken(ACCESS_TOKEN);
+
+		Thread t1 = new Thread(messageGet);
+		Thread t2 = new Thread(messageSend);
+		t1.start();
+		t2.start();
+//		MessageSend.sendMessageToId(ACCESS_TOKEN, vkIdUser, vkIdEnemy, "zalupa");
+//		getLastMessage(ACCESS_TOKEN, vkIdUser);
+
+//		getHistory(ACCESS_TOKEN, vkIdUser, vkIdEnemy);
+	}
+
+	public static void getHistory(String token, String idUser, String idEnemy) throws URISyntaxException, IOException,
+			ParseException, InterruptedException{
 		Scanner read = new Scanner(System.in);
-		System.out.println("How much last messages do u want to still ? : ");
+		System.out.println("How much last messages do u want to see ? : ");
 		String offset = read.next();
 		int offsetInt = Integer.parseInt(offset.trim());
 
-		PrintWriter writer = new PrintWriter(vkIdUser + "to" + vkIdEnemy + ".txt");
+		PrintWriter writer = new PrintWriter(idUser + "to" + idEnemy + ".txt");
 		for(int i = 0; i < offsetInt; i += 150){
-			Thread.sleep(334);
-			MessageGet.parseJSONOfMessagesHistory(ACCESS_TOKEN, vkIdEnemy, vkIdEnemy, Integer.toString(i), writer);
+			Thread.sleep(500);
+			MessageGet.printMessagesHistory(token, idUser, idEnemy, Integer.toString(i), writer);
 		}
 		writer.close();
-
-//		MessageGet.parseJSONOfMessagesHistory(ACCESS_TOKEN, vkIdEnemy, vkIdEnemy, "150", writer);
-//		MessageGet.parseJSONOfMessagesHistory(ACCESS_TOKEN, vkIdEnemy, vkIdEnemy, "300", writer);
 	}
 
-	public static boolean containLetters(String str){
-		if(str.replaceAll("[a-zA-Z]+", "CHANGED").contains("CHANGED"))
-			return true;
-		return false;
-	}
+	//read and send messages from one conversation
+	//notifications
+	//threads in simple console
+	//graphical interface for simple console
+
+	//REMAKE HISTORYmesage
+	//read offset and enemy
 
 	public static String getACCESS_TOKEN(){ //in future here i will easy take access token
 		String urlForVk = "https://oauth.vk.com/authorize" +
@@ -56,7 +78,7 @@ public class offlineChatVkontakte{
 		try{
 			URL url = new URL(urlForVk);
 			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
-			con.setConnectTimeout(334);
+			con.setConnectTimeout(2000);
 			con.connect();
 			int resp = con.getResponseCode();
 			if(resp == 200 || resp == 6){
@@ -81,7 +103,7 @@ public class offlineChatVkontakte{
 		try{
 			URL url = new URL(urlForVk);
 			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
-			con.setConnectTimeout(334);
+			con.setConnectTimeout(2000);
 			con.connect();
 			int resp = con.getResponseCode();
 			if(resp == 200 || resp == 6){
@@ -102,3 +124,5 @@ public class offlineChatVkontakte{
 		return null;
 	}
 }
+
+//https://oauth.vk.com/authorize?client_id=5144492&display=popup&scope=messages&response_type=token&v=5.40
