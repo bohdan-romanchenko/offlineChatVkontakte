@@ -13,11 +13,11 @@ import java.util.Scanner;
 public class offlineChatVkontakte{
 	public static void main(String[] args) throws URISyntaxException, IOException,
 			ParseException, InterruptedException{
-		String ACCESS_TOKEN = "3efddf60da1d6e40dcc67b0b891ec9903cb70fb881be8a61f7d37448c9da031cfb6390a03a2c9f53f01b9";
-		String vkIdUser = "b.nadman";
-		String vkNameUser = "Bohdan";
-		String vkNameEnemy = "Roma";
-		String vkIdEnemy = "never_complain";
+		String ACCESS_TOKEN = "";
+		String vkIdUser = "";
+		String vkNameUser = "";
+		String vkNameEnemy = "";
+		String vkIdEnemy = "";
 
 		if(User.containLetters(vkIdUser))
 			vkIdUser = User.getUserId(ACCESS_TOKEN, vkIdUser, "name");
@@ -25,20 +25,25 @@ public class offlineChatVkontakte{
 			vkIdEnemy = User.getUserId(ACCESS_TOKEN, vkIdEnemy, "name");
 
 		MessageGet messageGet = new MessageGet();
-
-//		messageGet.setIdEnemy(vkIdEnemy);
 		messageGet.setIdUser(vkIdUser);
 		messageGet.setToken(ACCESS_TOKEN);
 
 		MessageSend messageSend = new MessageSend();
-
 		messageSend.setIdUser(vkIdUser);
 		messageSend.setToken(ACCESS_TOKEN);
 
+		User userOffline = new User();
+		userOffline.setToken(ACCESS_TOKEN);
+		userOffline.setIdUser(vkIdUser);
+
 		Thread t1 = new Thread(messageGet);
 		Thread t2 = new Thread(messageSend);
+		Thread t3 = new Thread(userOffline);
+		Thread t4 = new Thread(userOffline);
+		t4.start();
 		t1.start();
 		t2.start();
+		t3.start();
 //		MessageSend.sendMessageToId(ACCESS_TOKEN, vkIdUser, vkIdEnemy, "zalupa");
 //		getLastMessage(ACCESS_TOKEN, vkIdUser);
 

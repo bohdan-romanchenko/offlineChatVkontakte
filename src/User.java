@@ -1,7 +1,6 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -9,7 +8,28 @@ import java.net.URL;
 /**
  * Created by nadman on 12.11.15.
  */
-public class User{
+public class User implements Runnable{
+
+	private String token;
+	private String idUser;
+
+	public void run(){
+		System.out.println("Thread 1");
+		try{
+			System.out.println(setOffline(token, idUser));
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void setToken(String token1){
+		token = token1;
+	}
+
+	public void setIdUser(String idUser1){
+		idUser = idUser1;
+	}
+
 	public static String getJSONAboutUser(String token, String idEnemy){
 		String urlForVk = "https://api.vk.com/method/users.search?&q=" + idEnemy + "&count=1&access_token=" + token;
 		try{
@@ -53,6 +73,32 @@ public class User{
 			e.printStackTrace();
 		}
 		return id;
+	}
+
+	public static String setOffline(String token, String idUser){
+		String urlForVk = "https://api.vk.com/method/account.setOffline?&q=" + idUser + "&access_token=" + token;
+		try{
+			URL url = new URL(urlForVk);
+			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+			con.setConnectTimeout(1000);
+			con.connect();
+			int resp = con.getResponseCode();
+			if(resp == 200 || resp == 6){
+				BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				String line;
+				StringBuilder sb = new StringBuilder();
+				while((line = br.readLine()) != null){
+					sb.append(line);
+					sb.append("\n");
+				}
+				br.close();
+				return sb.toString();
+			} else
+				System.out.println("Error " + resp);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static boolean containLetters(String str){
